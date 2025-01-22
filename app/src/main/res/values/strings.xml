@@ -1,0 +1,205 @@
+<resources>
+    <string name="app_name">LMS</string>
+
+    <string name="please_check_with_the_internet_connection">Please check with the Internet connection!</string>
+    <string name="response_failure_please_try_again">Response Failure. Please try again!</string>
+
+    <!--Sign in-->
+    <string name="welcome_txt">Welcome to LMS!</string>
+    <string name="welcome_txt_sub">An Introduction to the Generic Land Management System</string>
+    <string name="sign_in">Sign into account</string>
+    <string name="sign_in_txt">Enter your User ID &amp; password to login</string>
+    <string name="user_id_txt">User ID</string>
+    <string name="enter_user_id_txt">Enter your User ID</string>
+    <string name="password_txt">Password</string>
+    <string name="show_txt">Show</string>
+    <string name="enter_password_txt">Enter Password</string>
+    <string name="remember_me">Remember me</string>
+    <string name="hide_txt">Hide</string>
+    <string name="signIn">Sign In</string>
+    <string name="user_name_txt">User Name</string>
+    <string name="valid_password_error">Please enter valid Password!</string>
+    <string name="valid_username_error">Please enter valid UserId!</string>
+    <string name="wrong_password">InCorrect Password!</string>
+    <string name="user_details_not_found">User Details Not Found!</string>
+
+    <!-- menu-->
+    <string name="search_menu">Search</string>
+    <string name="home_menu">Home</string>
+    <string name="add_new_menu">Add New</string>
+    <string name="dash_board_menu">DashBoard</string>
+    <string name="employe_menu">Employee Master</string>
+    <string name="villege_menu">Village Master</string>
+    <string name="logout_menu_txt">Logout</string>
+    <string name="reset_password">Change Password</string>
+
+    <!-- Home page-->
+    <string name="total_ext">Total Ext. (Ac.)</string>
+    <string name="alocated_txt">Allotted to other\npurposes by Collector</string>
+    <string name="sold_office_txt">Alienated/sold out\nby this office</string>
+    <string name="formed_txt">Formed layout</string>
+    <string name="other_public_txt">Other public purposes</string>
+    <string name="clear_land_txt">Clear vacant land</string>
+    <string name="under_process">Under possession of \nothers</string>
+    <string name="select_district">Select District</string>
+    <string name="select_mandal">Select Mandal</string>
+    <string name="select_villege">Select Village</string>
+    <string name="utilize_txt">Utilization of Govt lands in\nMadhurawada village</string>
+    <string name="search_txt">Search:</string>
+    <string name="utilize_land_txt">Utilization of </string>
+    <string name="ex_act">Ext (Ac.)</string>
+    <!--add utilize-->
+    <string name="add_uti_head">Add Utilization of Govt Lands</string>
+    <string name="sy_no">Sy.No<font color="#d32f2f">*</font></string>
+    <string name="enter_sy_no">Enter Sy.No</string>
+    <string name="ex_act_star">Ext. (Ac.)<font color="#d32f2f">*</font></string>
+    <string name="enter_ext">Enter Ext</string>
+    <string name="classification_txt">Classification<font color="#d32f2f">*</font></string>
+    <string name="enter_classi">Enter Classification</string>
+    <string name="covered_txt">Covered by delivery receipt/ Collector prodgs/ GO<font color="#d32f2f">*</font></string>
+    <string name="enter_covered">Enter  receipt/ Collector prodgs/ GO</string>
+    <string name="utilization">Utilization</string>
+    <string name="alloted_text">Allotted to other purposes by Collector</string>
+    <string name="extent_ac">Extent (Ac.)<font color="#d32f2f">*</font></string>
+    <string name="enter_extent_ac">Enter Extent in Acrs</string>
+    <string name="purpose_name">Name of the purpose<font color="#d32f2f">*</font></string>
+    <string name="enter_purpose">Enter Name of the purpose</string>
+    <string name="alinated_txt">Alienated/ sold out by this office</string>
+    <string name="firm_name">Name of the firm<font color="#d32f2f">*</font></string>
+    <string name="enter_firm">Enter Firm</string>
+    <string name="sold_doc">Sold Document Upload<font color="#d32f2f">*</font></string>
+    <string name="choose_file">Choose File</string>
+    <string name="no_file_choosen">No File Chosen</string>
+    <string name="name_layout">Name of the Layout<font color="#d32f2f">*</font></string>
+    <string name="enter_layout">Enter Layout</string>
+    <string name="public_purpose">Public purpose<font color="#d32f2f">*</font></string>
+    <string name="enter_public_purpose_txt">Enter purpose</string>
+    <string name="unifit_dev">Unfit for development</string>
+    <string name="reason">Reason<font color="#d32f2f">*</font></string>
+    <string name="enter_reason">Enter Reason</string>
+    <string name="clear_land_txt_imp">Clear vacant land<font color="#d32f2f">*</font></string>
+    <string name="under_possesion">Under possession of others<font color="#d32f2f">*</font></string>
+    <string name="enter_land_data">Clear Vacant Land</string>
+    <string name="enter_under_possision">Enter under possesion</string>
+
+    <string name="court_case">Court cases</string>
+    <string name="wp_no_txt">WP No.<font color="#d32f2f">*</font></string>
+    <string name="enter_wp_no">Enter WP No</string>
+    <string name="gist_of_case">Gist of the case<font color="#d32f2f">*</font></string>
+    <string name="enter_gist">Enter Gist</string>
+    <string name="present_status">Present Status<font color="#d32f2f">*</font></string>
+    <string name="enter_present">Enter Details</string>
+    <string name="location_txt">Location</string>
+    <string name="distrcit_txt">District<font color="#d32f2f">*</font></string>
+    <string name="mandal_txt">Mandal<font color="#d32f2f">*</font></string>
+    <string name="villege_txt">Village<font color="#d32f2f">*</font></string>
+    <string name="enter_loc">Enter Location</string>
+    <string name="address_1">Address 1<font color="#d32f2f">*</font></string>
+    <string name="enter_Address">Enter Address</string>
+    <string name="latitude1">Latitude 1<font color="#d32f2f">*</font></string>
+    <string name="latitude2">Latitude 2<font color="#d32f2f">*</font></string>
+    <string name="latitude3">Latitude 3<font color="#d32f2f">*</font></string>
+    <string name="latitude4">Latitude 4<font color="#d32f2f">*</font></string>
+    <string name="enter_latitude">Enter Latitude</string>
+    <string name="enter_longitude">Enter Longitude</string>
+    <string name="longitude1">Longitude 1<font color="#d32f2f">*</font></string>
+    <string name="longitude2">Longitude 2<font color="#d32f2f">*</font></string>
+    <string name="longitude3">Longitude 3<font color="#d32f2f">*</font></string>
+    <string name="longitude4">Longitude 4<font color="#d32f2f">*</font></string>
+    <string name="remarks_txt">Remarks<font color="#d32f2f">*</font></string>
+    <string name="enter_remarks">Enter Remarks</string>
+    <string name="aggree_term">Agree to terms and conditions</string>
+    <string name="submit_txt">Submit</string>
+    <string name="next_txt">Next</string>
+
+    <string name="please_enter_sy_no">Please Enter Sy.No!</string>
+    <string name="please_enter_Ext">Please Enter Ext value!</string>
+    <string name="please_enter_classifi">Please Enter Classification!</string>
+    <string name="please_enter_covered">Please Enter receipt/Collector prodgs/ Go !</string>
+    <string name="please_enter_extent">Please Enter Excent in Acrs!</string>
+    <string name="please_enter_purpose">Please Enter Name of the purpose!</string>
+    <string name="please_enter_firm_name">Please Enter Firm Name!</string>
+    <string name="please_enter_layout">Please Enter LayoutName!</string>
+    <string name="please_enter_public_purpose">Please Enter Public Purpose!</string>
+    <string name="please_enter_reason">Please Enter Reason!</string>
+    <string name="please_enter_clear_land">Please Enter Clear Vacant land Details!</string>
+    <string name="please_enter_under_possie">Please Enter other Possessions!</string>
+
+    <string name="please_enter_wp_no">Please Enter WP No.</string>
+    <string name="please_enter_gist">Please Enter Gist of the case!</string>
+    <string name="please_enter_present">Please Enter Present Status!</string>
+    <string name="please_select_distrcit">Please Select District!</string>
+    <string name="please_select_mandal">Please Select Mandal!</string>
+    <string name="please_select_village">Please Select Village!</string>
+    <string name="please_enter_location">Please Enter Location!</string>
+    <string name="please_enter_address">Please Enter Address!</string>
+    <string name="please_enter_latitude1">Please Enter Latitude 1</string>
+    <string name="please_enter_longitude1">Please Enter Longitude 1</string>
+    <string name="please_enter_latitude2">Please Enter Latitude 2</string>
+    <string name="please_enter_longitude2">Please Enter Longitude 2</string>
+    <string name="please_enter_latitude3">Please Enter Latitude 3</string>
+    <string name="please_enter_longitude3">Please Enter Longitude 3</string>
+    <string name="please_enter_latitude4">Please Enter Latitude4</string>
+    <string name="please_enter_longitude4">Please Enter Longitude 4</string>
+    <string name="please_enter_remarks">Please Enter Remarks!</string>
+    <string name="please_select_terms">Please select Terms and Conditions!</string>
+    <string name="are_you_sure_text">Are you sure want to Logout?</string>
+    <string name="no_text">No</string>
+    <string name="yes_text">Yes</string>
+
+    <!-- Employee master-->
+    <string name="add_employe">Add Employee Details</string>
+    <string name="continue_or_leave">Are you sure want to Exit?</string>
+    <string name="emp_name">Employee Name<font color="#d32f2f">*</font></string>
+    <string name="enter_emp_name">Enter Employee Name</string>
+    <string name="log_name">Login Name<font color="#d32f2f">*</font></string>
+    <string name="enter_log_name">Enter Login Name</string>
+    <string name="mob_no">Mobile<font color="#d32f2f">*</font></string>
+    <string name="enter_mob">Enter Mobile Number</string>
+    <string name="email_id">Email<font color="#d32f2f">*</font></string>
+    <string name="enter_Email">Enter Email Details</string>
+    <string name="save_txt">Save</string>
+    <string name="clear_txt">Clear</string>
+    <string name="copy_txt">Copy</string>
+    <string name="excel_txt">Excel</string>
+    <string name="csv_txt">CSV</string>
+    <string name="pdf_txt">PDF</string>
+    <string name="sn_no">S.No</string>
+    <string name="action">Action</string>
+
+    <!-- village master -->
+    <string name="enter_district">Enter District Details</string>
+    <string name="enter_mandal">Enter Mandal Details</string>
+    <string name="enter_village">Enter Village Details</string>
+    <string name="add_village">Add Village Details</string>
+
+    <!--reset password -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="old_pass">Old Password</string>
+    <string name="new_pass">New Password</string>
+    <string name="confirm_pass">Confirm Password</string>
+    <string name="change_pass">Change Password</string>
+    <string name="enter_old_pass">Enter Old Password</string>
+    <string name="enter_new_pass">Enter New Password</string>
+    <string name="enter_confirm_pass">Enter Confirm Password</string>
+    <string name="no_data">No Data Available</string>
+    <string name="add_employee_success">Employee Added SuccessFully!</string>
+    <string name="add_village_success">Village Details Added SuccessFully!</string>
+    <string name="upload_failed">Upload failed!</string>
+    <string name="actions_txt">Actions</string>
+    <string name="unit_dev">Unit of Development</string>
+    <string name="geo_coordinates">Geo Coordinates</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="image_not_available">Image Not Available!</string>
+    <string name="pdf_not_available">Pdf Not Available!</string>
+    <string name="close">Close</string>
+    <string name="upload_image">Upload Image<font color="#d32f2f">*</font></string>
+    <string name="choose_Image">Choose Image</string>
+    <string name="project_progress_updated_successfully">Project Added Successfully!</string>
+    <string name="previous_txt">Previous</string>
+    <string name="password_changes_sucess">Password Changed SuccessFully!</string>
+    <string name="old_pass_error">Old Password is Wrong!</string>
+    <string name="pass_not_match">Password  dons\'t match!</string>
+
+
+</resources>
