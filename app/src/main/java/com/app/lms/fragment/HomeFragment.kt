@@ -651,15 +651,23 @@ class HomeFragment : Fragment(),CallBackData{
                             }
 
                             if (mandals_list.size > 0) {
-                                var mandal_name_list=ArrayList<String>()
-                                mandal_name_list.add("Choose..")
-                                for(i in mandals_list.indices){
-                                    mandal_name_list.add(mandals_list[i].name.toString())
+                                try {
+                                    var mandal_name_list = ArrayList<String>()
+                                    mandal_name_list.add("Choose..")
+                                    for (i in mandals_list.indices) {
+                                        mandal_name_list.add(mandals_list[i].name.toString())
+                                    }
+                                    lateinit var mandals_adapter: ArrayAdapter<String>
+                                    mandals_adapter = ArrayAdapter(
+                                        requireContext(),
+                                        R.layout.spinner_item,
+                                        mandal_name_list
+                                    )
+                                    binding.spinnerMandal.adapter = mandals_adapter
+                                    progressDialog.dismiss()
+                                }catch (e:Exception){
+                                   e.printStackTrace()
                                 }
-                                lateinit var mandals_adapter: ArrayAdapter<String>
-                                mandals_adapter = ArrayAdapter(requireContext(), R.layout.spinner_item, mandal_name_list)
-                                binding.spinnerMandal.adapter = mandals_adapter
-                                progressDialog.dismiss()
                             } else {
                                 progressDialog.dismiss()
 

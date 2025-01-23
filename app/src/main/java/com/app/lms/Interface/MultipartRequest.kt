@@ -4,7 +4,7 @@ import com.android.volley.toolbox.Volley
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
-open class MultipartRequest(
+open class MultipartRequestes(
     method: Int,
     url: String,
     private val listener: Response.Listener<NetworkResponse>,

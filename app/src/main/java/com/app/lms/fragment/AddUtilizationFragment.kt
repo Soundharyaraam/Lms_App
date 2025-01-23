@@ -1,6 +1,5 @@
 package com.app.lms.fragment
 
-import MultipartRequest
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -23,9 +22,12 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.EWPMS.utilities.AppConstants
+import com.android.volley.AuthFailureError
+import com.android.volley.NetworkResponse
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
+import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -36,19 +38,26 @@ import com.app.lms.dataResponse.DashBoardSpinnerResponse
 import com.app.lms.databinding.FragmentAddUtilizationBinding
 import com.app.lms.utilities.AppSharedPreferences
 import com.app.lms.utilities.Common
+import com.app.lms.utilities.FileUtils
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class AddUtilizationFragment : Fragment() {
 
     private lateinit var binding: FragmentAddUtilizationBinding
-    var pdfUri: Uri? = null
-    var imageUri: Uri? = null
+    private var pdfUri: Uri? = null
+    private var imageUri: Uri? = null
     //api call
     lateinit var progressDialog: Dialog
 
@@ -265,7 +274,7 @@ class AddUtilizationFragment : Fragment() {
             try {
                 progressDialog.show()
 
-                val url = "http://vmrda.gov.in/ewpms_api/api/Usp_Ins_ProjectsLMS"
+                val url = "http://vmrda.gov.in/ewpms_api/api/Usp_Ins_ProjectsLMS2"
 
                 val paramsMap = mutableMapOf<String, String>()
 
@@ -347,7 +356,6 @@ class AddUtilizationFragment : Fragment() {
                     put("Longitude4", binding.latitude4Et.text.toString().trim())
                     put("Location", binding.locationEt.text.toString().trim())
                     put("Remarks", binding.remarksEt.text.toString().trim())
-                    //  put("Sold_Document_fn","")
                     put(
                         "UpdatedBy",
                         AppSharedPreferences.getStringSharedPreference(
@@ -355,106 +363,191 @@ class AddUtilizationFragment : Fragment() {
                             AppConstants.USERTYPE
                         )
                     )
+
+                    if(pdfUri!=null){
+                        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                        put("FileUpload2",  timeStamp.toString()+".pdf")
+                        put("FileUpload3",  timeStamp.toString()+".jpg")
+                    }
                 }
 
                 jsonBody.keys().forEach { key ->
                     paramsMap[key] = jsonBody.getString(key)
                 }
 
-                Log.e("project_params ", jsonBody.toString())
-                val requestQueue: RequestQueue = Volley.newRequestQueue(requireContext())
-
                 if (pdfUri != null) {
-                    val multipartRequest = object : MultipartRequest(
-                        Method.POST,
-                        url,
-                        Response.Listener { response ->
+                    Log.e("project_params ", paramsMap.toString())
+
+                    class MultipartRequest(
+                      url: String,
+                      private val headers: Map<String, String>?,
+                      private val params: Map<String, String>,
+                      private val files: Map<String, File>, // Map of field names to files
+                      private val listener: Response.Listener<String>,
+                      errorListener: Response.ErrorListener
+                  ) : StringRequest(Method.POST, url, listener, errorListener) {
+
+                      private val boundary = "volleyBoundary" + System.currentTimeMillis()
+
+                      override fun getBodyContentType(): String {
+                          return "multipart/form-data;boundary=$boundary"
+                      }
+
+                      override fun getHeaders(): MutableMap<String, String> {
+                          return headers?.toMutableMap() ?: super.getHeaders()
+                      }
+
+                      override fun getBody(): ByteArray {
+                          val bos = ByteArrayOutputStream()
+                          val dos = DataOutputStream(bos)
+                          try {
+                              // Add form fields
+                              for ((key, value) in params) {
+                                  buildTextPart(dos, key, value)
+                              }
+
+                              // Add file fields
+                              for ((fieldName, file) in files) {
+                                  buildFilePart(dos, fieldName, file)
+                              }
+
+                              // End of multipart
+                              dos.writeBytes("--$boundary--\r\n")
+                          } catch (e: IOException) {
+                              e.printStackTrace()
+                          }
+                          return bos.toByteArray()
+                      }
+
+                      private fun buildTextPart(dos: DataOutputStream, name: String, value: String) {
+                          dos.writeBytes("--$boundary\r\n")
+                          dos.writeBytes("Content-Disposition: form-data; name=\"$name\"\r\n\r\n")
+                          dos.writeBytes("$value\r\n")
+                      }
+
+                      private fun buildFilePart(dos: DataOutputStream, fieldName: String, file: File) {
+                          dos.writeBytes("--$boundary\r\n")
+                          dos.writeBytes("Content-Disposition: form-data; name=\"$fieldName\"; filename=\"${file.name}\"\r\n")
+                          dos.writeBytes("Content-Type: ${getMimeType(file)}\r\n\r\n")
+
+                          val fileInputStream = FileInputStream(file)
+                          val buffer = ByteArray(1024)
+                          var bytesRead: Int
+                          while (fileInputStream.read(buffer).also { bytesRead = it } != -1) {
+                              dos.write(buffer, 0, bytesRead)
+                          }
+                          dos.writeBytes("\r\n")
+                          fileInputStream.close()
+                      }
+
+                      private fun getMimeType(file: File): String {
+                          return when {
+                              file.name.endsWith(".jpg") || file.name.endsWith(".jpeg") -> "image/jpeg"
+                              file.name.endsWith(".png") -> "image/png"
+                              file.name.endsWith(".pdf") -> "application/pdf"
+                              else -> "application/octet-stream"
+                          }
+                      }
+
+                      override fun parseNetworkResponse(response: NetworkResponse): Response<String> {
+                          return try {
+                              val result = String(response.data)
+                              Response.success(result, HttpHeaderParser.parseCacheHeaders(response))
+                          } catch (e: Exception) {
+                              Response.error(AuthFailureError())
+                          }
+                      }
+                  }
+
+                    var files= mapOf<String, File>()
+
+                    if(imageUri != null && pdfUri != null) {
+                        val imageFile: File = File(FileUtils.getPath(requireContext(), imageUri))
+                        val pdfFile: File = File(FileUtils.getPath(requireContext(), pdfUri))
+                        files = mapOf(
+                            "image" to imageFile, // Field name for the image file
+                            "pdf" to pdfFile    // Field name for the PDF file
+                        )
+                    }else if(imageUri != null){
+                        val imageFile: File = File(FileUtils.getPath(requireContext(), imageUri))
+                        files = mapOf(
+                            "image" to imageFile, // Field name for the image file
+                        )
+                    }else if(pdfUri != null){
+                        val pdfFile: File = File(FileUtils.getPath(requireContext(), pdfUri))
+                        files = mapOf(
+                            "pdf" to pdfFile // Field name for the pdf file
+                        )
+                    }
+
+                    val request = MultipartRequest(
+                        url = url,
+                        headers = null, // Add headers if needed
+                        params = paramsMap,
+                        files = files,
+                        listener = { response ->
                             try {
-                                val responseString = String(response.data)
-                                Log.e("Upload Success", responseString)
+                                // Handle the JSONArray response
+                                // Parse the response as a JSON array
+                                val jsonArray = JSONArray(response)
 
-                                val jsonResponse = JSONArray(responseString)
-                                for (i in 0 until jsonResponse.length()) {
-                                    val jsonObject = jsonResponse.getJSONObject(i)
-                                    if (jsonObject.has("projectId")) {
-                                        val projectId = jsonObject.getString("projectId")
-                                        val retVal = jsonObject.getString("RetVal")
-                                        Log.e("Project ID", projectId)
+                                // Get the first object from the array
+                                val jsonObject: JSONObject = jsonArray.getJSONObject(0)
 
-                                        if (retVal == "Success") {
-                                            progressDialog.dismiss()
-                                            Toast.makeText(
-                                                requireContext(),
-                                                getString(R.string.project_progress_updated_successfully),
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                // Extract the values
+                                val retVal = jsonObject.getString("RetVal")
+                                val ProjectId = jsonObject.getString("ProjectId")
+                                    Log.d("Response Value", "RetVal: $retVal")
+                                    if (retVal == "Success") {
+                                        progressDialog.dismiss()
+                                        // Handle the successful response
+                                        Toast.makeText(
+                                            requireContext(),
+                                            getString(R.string.project_progress_updated_successfully),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        if(ProjectId.isNotEmpty()) {
                                             startActivity(
                                                 Intent(
                                                     requireContext(),
                                                     ProjectDetailsActivity::class.java
-                                                )
-                                                    .putExtra("id", projectId)
+                                                ).putExtra("id", ProjectId)
                                             )
                                             requireActivity().finish()
-                                        } else {
-                                            progressDialog.dismiss()
-                                            Toast.makeText(
-                                                requireContext(),
-                                                getString(R.string.upload_failed) + ": $retVal",
-                                                Toast.LENGTH_LONG
-                                            ).show()
+                                        }else{
+                                            startActivity(
+                                                Intent(
+                                                    requireContext(),
+                                                    MainActivity::class.java
+                                                )
+                                            )
+                                            requireActivity().finish()
                                         }
+                                    } else {
+                                        progressDialog.dismiss()
+                                        Toast.makeText(
+                                            requireContext(),
+                                            getString(R.string.upload_failed) + ": ${retVal}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
                                     }
-                                }
                             } catch (e: JSONException) {
                                 e.printStackTrace()
-                                progressDialog.dismiss()
                                 Log.e("API Error", "JSON Parsing error: ${e.message}")
                             }
                         },
-                        Response.ErrorListener { error ->
-                            progressDialog.dismiss()
+                        errorListener = { error ->
                             error.printStackTrace()
-                            Log.e("UploadError", "Error: ${error.message}")
+                            println("Error: ${error.message}")
+                            progressDialog.dismiss()
+                            Toast.makeText(requireContext(), getString(R.string.upload_failed) + ": ${error.message}", Toast.LENGTH_LONG).show()
                         }
-                    ) {
-                        override fun getParams(): Map<String, String> {
-                            return emptyMap() // Pass all data in JSON body or file data
-                        }
+                    )
 
-                        override fun getByteData(): Map<String, MultipartRequest.DataPart> {
-                            val byteDataMap = mutableMapOf<String, MultipartRequest.DataPart>()
-
-                            // Add files
-                            pdfUri?.let {
-                                val pdfFile = uriToFile(requireContext(), it, "file.pdf")
-                                byteDataMap["FileUpload2"] = MultipartRequest.DataPart(
-                                    "file.pdf",
-                                    pdfFile!!.readBytes(),
-                                    "application/pdf"
-                                )
-                            }
-
-                            imageUri?.let {
-                                val imageFile = uriToFile(requireContext(), it, "image.jpg")
-                                byteDataMap["FileUpload3"] = MultipartRequest.DataPart(
-                                    "image.jpg",
-                                    imageFile!!.readBytes(),
-                                    "image/jpeg"
-                                )
-                            }
-
-                            return byteDataMap
-                        }
-
-                        override fun getBodyContentType(): String {
-                            return "multipart/form-data; charset=utf-8; boundary=${boundary}" // Ensure proper content type
-                        }
-                    }
-
-// Add request to queue
-                    requestQueue.add(multipartRequest)
-                } else {
+                    val requestQueue = Volley.newRequestQueue(requireContext())
+                    requestQueue.add(request)
+                }
+                else {
 
                     val requestQueue: RequestQueue = Volley.newRequestQueue(requireContext())
 
@@ -478,13 +571,23 @@ class AddUtilizationFragment : Fragment() {
                                             getString(R.string.project_progress_updated_successfully),
                                             Toast.LENGTH_SHORT
                                         ).show()
-                                        startActivity(
-                                            Intent(
-                                                requireContext(),
-                                                ProjectDetailsActivity::class.java
-                                            ).putExtra("id", ProjectId)
-                                        )
-                                        requireActivity().finish()
+                                        if(ProjectId.isNotEmpty()) {
+                                            startActivity(
+                                                Intent(
+                                                    requireContext(),
+                                                    ProjectDetailsActivity::class.java
+                                                ).putExtra("id", ProjectId)
+                                            )
+                                            requireActivity().finish()
+                                        }else{
+                                            startActivity(
+                                                Intent(
+                                                    requireContext(),
+                                                    MainActivity::class.java
+                                                )
+                                            )
+                                            requireActivity().finish()
+                                        }
                                     } else {
                                         progressDialog.dismiss()
                                         Toast.makeText(
@@ -543,12 +646,6 @@ class AddUtilizationFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-    }
-
-    fun Uri.readBytes(contentResolver: ContentResolver): ByteArray {
-        return contentResolver.openInputStream(this)?.use { inputStream ->
-            inputStream.readBytes()
-        } ?: throw IOException("Unable to open URI: $this")
     }
 
 
@@ -850,41 +947,12 @@ class AddUtilizationFragment : Fragment() {
 
     //uri to file
     fun uriToFile(context: Context, uri: Uri, fileName: String): File? {
-        val file = File(context.cacheDir, fileName) // Temporary file
-        var inputStream: InputStream? = null
-        var outputStream: FileOutputStream? = null
-
-        try {
-            inputStream = context.contentResolver.openInputStream(uri)
-            outputStream = FileOutputStream(file)
-
-            // Copy content from the URI to the file
-            val buffer = ByteArray(1024)
-            var length: Int
-            while (inputStream?.read(buffer).also { length = it ?: -1 } != -1) {
-                outputStream.write(buffer, 0, length)
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        } finally {
-            try {
-                inputStream?.close()
-                outputStream?.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val tempFile = File(context.cacheDir, fileName)
+        tempFile.outputStream().use { outputStream ->
+            inputStream.copyTo(outputStream)
         }
-
-        return file
+        return tempFile
     }
 
-    fun getBytesFromFile(file: File): ByteArray {
-        return try {
-            file.readBytes()
-        } catch (e: IOException) {
-            e.printStackTrace()
-            byteArrayOf()
-        }
-    }
 }
