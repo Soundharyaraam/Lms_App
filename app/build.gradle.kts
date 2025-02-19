@@ -84,6 +84,9 @@ dependencies {
     implementation ("org.apache.poi:poi:5.2.3")     // For .xls files
     implementation ("org.apache.poi:poi-ooxml:5.2.3") // For .xlsx files
 
+    //glide
+    implementation ("com.github.bumptech.glide:glide:4.13.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

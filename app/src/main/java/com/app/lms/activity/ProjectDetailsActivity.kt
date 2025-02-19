@@ -11,25 +11,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.app.lms.Adapter.ProjectsAdapter
 import com.app.lms.MainActivity
 import com.app.lms.R
-import com.app.lms.SignInActivity
-import com.app.lms.dataResponse.ProjectsListResponse
-import com.app.lms.databinding.ActivityMainBinding
 import com.app.lms.databinding.ActivityProjectDetailsBinding
-import com.app.lms.databinding.FragmentAddEmployeeBinding
 import com.app.lms.utilities.Common
+import com.bumptech.glide.Glide
 import org.json.JSONArray
 import org.json.JSONException
 
@@ -160,18 +154,73 @@ class ProjectDetailsActivity : AppCompatActivity() {
 
                                 binding.mapIcon.setOnClickListener {
                                     val uri = "geo:$Latitude,$Longitude?q=$Latitude,$Longitude($VillageName)"
+                                    println("URI: $uri") // Log the URI
+
                                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
                                     intent.setPackage("com.google.android.apps.maps") // Ensure it opens in Google Maps
-                                    if (intent.resolveActivity(packageManager) != null) {
+
+                                    val resolvedActivity = intent.resolveActivity(packageManager)
+                                    println("Resolved Activity: $resolvedActivity") // Log the resolved activity
+
+                                    if (resolvedActivity != null) {
                                         startActivity(intent)
                                     } else {
-                                        Toast.makeText(this, "Google Maps is not installed", Toast.LENGTH_SHORT).show()
+                                        // Fallback to web browser
+                                        val webUri = "https://www.google.com/maps/search/?api=1&query=$Latitude,$Longitude"
+                                        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(webUri))
+                                        if (webIntent.resolveActivity(packageManager) != null) {
+                                            startActivity(webIntent)
+                                        } else {
+                                            Toast.makeText(this, "No app to handle the request", Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 }
 
                                 binding.gallaryIcon.setOnClickListener {
-                                   Toast.makeText(this@ProjectDetailsActivity,
-                                       getString(R.string.image_not_available),Toast.LENGTH_SHORT).show()
+                                    if (fn1.isNotEmpty()) {
+                                        val dialog = Dialog(this@ProjectDetailsActivity)
+                                        dialog.setContentView(R.layout.popup_project)
+                                        dialog.setCancelable(false)
+                                        dialog.setCanceledOnTouchOutside(false)
+                                        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+
+                                        // Set the width of the dialog
+                                        val displayMetrics = DisplayMetrics()
+                                        windowManager.defaultDisplay.getMetrics(displayMetrics)
+                                        val width = displayMetrics.widthPixels
+                                        dialog.window?.setLayout(
+                                            (width * 0.9).toInt(),
+                                            ViewGroup.LayoutParams.WRAP_CONTENT
+                                        )
+
+                                        var yes_btn = dialog.findViewById<Button>(R.id.close_btn_gallary)
+                                        var geo_layout =
+                                            dialog.findViewById<LinearLayout>(R.id.geo_layout)
+                                        var webview_layout =
+                                            dialog.findViewById<LinearLayout>(R.id.webview_layout)
+                                        var galary_view_layout =
+                                            dialog.findViewById<LinearLayout>(R.id.gallary_view_layout)
+                                        var imageview =
+                                            dialog.findViewById<ImageView>(R.id.gallary_image)
+
+                                        webview_layout.visibility = View.GONE
+                                        geo_layout.visibility = View.GONE
+                                        galary_view_layout.visibility = View.VISIBLE
+
+                                        Glide.with(this).load(fn1).into(imageview)
+
+                                        yes_btn.setOnClickListener {
+                                            dialog.dismiss()
+                                        }
+
+                                        dialog.show()
+                                    } else {
+                                        Toast.makeText(
+                                            this@ProjectDetailsActivity,
+                                            getString(R.string.image_not_available),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
 
                                 binding.markerImg.setOnClickListener {
@@ -191,7 +240,9 @@ class ProjectDetailsActivity : AppCompatActivity() {
                                     var geo_tv = dialog.findViewById<TextView>(R.id.geo_tv)
                                     var geo_layout = dialog.findViewById<LinearLayout>(R.id.geo_layout)
                                     var webview_layout = dialog.findViewById<LinearLayout>(R.id.webview_layout)
+                                    var galary_view_layout = dialog.findViewById<LinearLayout>(R.id.gallary_view_layout)
 
+                                    galary_view_layout.visibility=View.GONE
                                     webview_layout.visibility=View.GONE
                                     geo_layout.visibility=View.VISIBLE
 
@@ -263,7 +314,9 @@ class ProjectDetailsActivity : AppCompatActivity() {
                                             dialog.findViewById<LinearLayout>(R.id.geo_layout)
                                         var webview_layout =
                                             dialog.findViewById<LinearLayout>(R.id.webview_layout)
+                                        var galary_view_layout = dialog.findViewById<LinearLayout>(R.id.gallary_view_layout)
 
+                                        galary_view_layout.visibility=View.GONE
                                         geo_layout.visibility = View.GONE
                                         webview_layout.visibility = View.VISIBLE
 
